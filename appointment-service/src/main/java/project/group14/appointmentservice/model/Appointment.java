@@ -4,31 +4,43 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import project.group14.medicalrecordservice.model.PatientRecord;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Appointment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String status;
 
     @Column(nullable = false)
     private LocalDateTime appointmentDateTime;
 
     @Column(nullable = false)
+    private Integer appointmentDuration; // duration in minutes
+
+    @Column(nullable = false)
     private String doctorName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private String clinicalNotes;
 
-//    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
-//    private MedicalRecord medicalRecord;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_record_id", nullable = false)
+    private PatientRecord patientRecord;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
 }
