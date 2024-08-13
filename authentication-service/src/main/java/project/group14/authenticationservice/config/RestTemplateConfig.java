@@ -1,4 +1,4 @@
-package project.group14.medicalrecordservice.config;
+package project.group14.authenticationservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

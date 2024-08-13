@@ -21,6 +21,7 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
+
     @GetMapping
     public List<AppointmentDTO> getAppointmentsByPatientRecord(@RequestParam Long patientRecordId) {
         PatientRecord patientRecord = new PatientRecord();
@@ -42,5 +43,10 @@ public class AppointmentController {
     @PutMapping("/{id}")
     public ResponseEntity<AppointmentDTO> updateAppointment(@PathVariable Long id, @RequestBody AppointmentDTO appointmentDTO) {
         return ResponseEntity.ok(appointmentService.updateAppointment(id, appointmentDTO));
+    }
+
+    @GetMapping("/admin/all")
+    public List<AppointmentDTO> getAllAppointments() {
+        return appointmentService.getAllAppointments();
     }
 }

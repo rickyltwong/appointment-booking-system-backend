@@ -1,42 +1,43 @@
 package project.group14.medicalrecordservice.service;
 
-import project.group14.medicalrecordservice.dto.AppointmentDTO;
-import project.group14.medicalrecordservice.repository.PatientRecordRepository;
-import project.group14.medicalrecordservice.model.PatientRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import project.group14.medicalrecordservice.dto.PatientRecordDTO;
+import project.group14.medicalrecordservice.model.PatientRecord;
+import project.group14.medicalrecordservice.repository.PatientRecordRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PatientRecordService {
 
     private final PatientRecordRepository patientRecordRepository;
-    private final RestTemplate restTemplate;
 
     @Autowired
-    public PatientRecordService(PatientRecordRepository patientRecordRepository, RestTemplate restTemplate) {
+    public PatientRecordService(PatientRecordRepository patientRecordRepository) {
         this.patientRecordRepository = patientRecordRepository;
-        this.restTemplate = restTemplate;
     }
 
-    private static final String APPOINTMENT_SERVICE_URL = "http://localhost:8081/appointments";
-
-    public List<PatientRecord> getAllPatients() {
-        return patientRecordRepository.findAll();
+    public List<PatientRecordDTO> getAllPatients() {
+        return patientRecordRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<PatientRecord> getPatientById(Long id) {
-        return patientRecordRepository.findById(id);
+    public Optional<PatientRecordDTO> getPatientById(Long id) {
+        return patientRecordRepository.findById(id)
+                .map(this::convertToDTO);
     }
 
-    public PatientRecord savePatientRecord(PatientRecord patientRecord) {
-        return patientRecordRepository.save(patientRecord);
+    public PatientRecordDTO savePatientRecord(PatientRecordDTO patientRecordDTO) {
+        PatientRecord patientRecord = convertToEntity(patientRecordDTO);
+        PatientRecord savedRecord = patientRecordRepository.save(patientRecord);
+        return convertToDTO(savedRecord);
     }
 
-    public PatientRecord updatePatientRecord(Long id, PatientRecord patientRecordDetails) {
+    public PatientRecordDTO updatePatientRecord(Long id, PatientRecordDTO patientRecordDetails) {
         Optional<PatientRecord> optionalPatientRecord = patientRecordRepository.findById(id);
         if (optionalPatientRecord.isPresent()) {
             PatientRecord existingPatientRecord = optionalPatientRecord.get();
@@ -47,7 +48,8 @@ public class PatientRecordService {
             existingPatientRecord.setPhoneNumber(patientRecordDetails.getPhoneNumber());
             existingPatientRecord.setEmail(patientRecordDetails.getEmail());
             existingPatientRecord.setDateOfBirth(patientRecordDetails.getDateOfBirth());
-            return patientRecordRepository.save(existingPatientRecord);
+            PatientRecord updatedRecord = patientRecordRepository.save(existingPatientRecord);
+            return convertToDTO(updatedRecord);
         } else {
             throw new RuntimeException("Patient not found");
         }
@@ -57,21 +59,31 @@ public class PatientRecordService {
         patientRecordRepository.deleteById(id);
     }
 
-    public List getAppointmentsForPatient(Long patientRecordId) {
-        String url = APPOINTMENT_SERVICE_URL + "?patientRecordId=" + patientRecordId;
-        return restTemplate.getForObject(url, List.class);
+    private PatientRecordDTO convertToDTO(PatientRecord patientRecord) {
+        return new PatientRecordDTO(
+                patientRecord.getId(),
+                patientRecord.getFirstName(),
+                patientRecord.getLastName(),
+                patientRecord.getGender(),
+                patientRecord.getAddress(),
+                patientRecord.getPhoneNumber(),
+                patientRecord.getEmail(),
+                patientRecord.getDateOfBirth(),
+                patientRecord.getCreatedAt()
+        );
     }
 
-    public AppointmentDTO createAppointmentForPatient(AppointmentDTO appointmentDTO) {
-        return restTemplate.postForObject(APPOINTMENT_SERVICE_URL + "/new", appointmentDTO, AppointmentDTO.class);
-    }
-
-    public AppointmentDTO updateAppointmentForPatient(Long appointmentId, AppointmentDTO appointmentDTO) {
-        restTemplate.put(APPOINTMENT_SERVICE_URL + "/" + appointmentId, appointmentDTO);
-        return appointmentDTO;
-    }
-
-    public void deleteAppointmentForPatient(Long appointmentId) {
-        restTemplate.delete(APPOINTMENT_SERVICE_URL + "/" + appointmentId);
+    private PatientRecord convertToEntity(PatientRecordDTO patientRecordDTO) {
+        return new PatientRecord(
+                patientRecordDTO.getId(),
+                patientRecordDTO.getFirstName(),
+                patientRecordDTO.getLastName(),
+                patientRecordDTO.getGender(),
+                patientRecordDTO.getAddress(),
+                patientRecordDTO.getPhoneNumber(),
+                patientRecordDTO.getEmail(),
+                patientRecordDTO.getDateOfBirth(),
+                patientRecordDTO.getCreatedAt()
+        );
     }
 }

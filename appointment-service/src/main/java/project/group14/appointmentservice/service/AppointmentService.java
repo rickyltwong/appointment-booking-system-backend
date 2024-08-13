@@ -3,7 +3,6 @@ package project.group14.appointmentservice.service;
 import project.group14.appointmentservice.dto.AppointmentDTO;
 import project.group14.appointmentservice.model.Appointment;
 import project.group14.appointmentservice.repository.AppointmentRepository;
-import project.group14.medicalrecordservice.model.PatientRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,8 +58,15 @@ public class AppointmentService {
         }
     }
 
-    public void deleteAppointment(Long id) {
-        appointmentRepository.deleteById(id);
+    // no appointment need to be deleted
+//    public void deleteAppointment(Long id) {
+//        appointmentRepository.deleteById(id);
+//    }
+
+    public List<AppointmentDTO> getAllAppointments() {
+        return appointmentRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     private AppointmentDTO convertToDTO(Appointment appointment) {

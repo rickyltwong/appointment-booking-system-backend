@@ -9,16 +9,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import project.group14.authenticationservice.service.UserService;
+import project.group14.authenticationservice.service.ApplicationService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserService userService;
+    private final ApplicationService userService;
 
     @Autowired
-    public SecurityConfig(UserService userService) {
+    public SecurityConfig(ApplicationService userService) {
         this.userService = userService;
     }
 

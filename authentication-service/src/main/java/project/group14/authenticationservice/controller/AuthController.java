@@ -5,20 +5,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import project.group14.authenticationservice.model.User;
-import project.group14.authenticationservice.service.UserService;
+import project.group14.authenticationservice.service.AuthService;
 
 @Controller
 public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/register")
     public String registerUserAccount(@ModelAttribute("user") User user) {
-        userService.registerNewUser(user);
+        authService.saveUser(user);
         return "redirect:/login";
     }
 }

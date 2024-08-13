@@ -1,4 +1,4 @@
-package project.group14.medicalrecordservice.dto;
+package project.group14.authenticationservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
