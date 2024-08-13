@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.client.RestTemplate;
 import project.group14.authenticationservice.dto.AppointmentDTO;
+import project.group14.authenticationservice.dto.NotificationDTO;
 import project.group14.authenticationservice.dto.PatientRecordDTO;
 import project.group14.authenticationservice.model.User;
 import project.group14.authenticationservice.repository.UserRepository;
@@ -48,7 +49,15 @@ public class ApplicationService {
     public AppointmentDTO createAppointment(AppointmentDTO appointmentDTO) {
         PatientRecordDTO patientRecordDTO = getPatientRecordByUserId();
         appointmentDTO.setPatientRecordId(patientRecordDTO.getId());
-        return restTemplate.postForObject(APPOINTMENT_SERVICE_URL, appointmentDTO, AppointmentDTO.class);
+        AppointmentDTO appointment = restTemplate.postForObject(APPOINTMENT_SERVICE_URL, appointmentDTO, AppointmentDTO.class);
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setAppointmentDate(appointment.getAppointmentDateTime());
+        notificationDTO.setAppointmentId(appointment.getId());
+        notificationDTO.setTitle("Appointment created");
+        notificationDTO.setMessage("Your appointment created with doctor " + appointment.getDoctorName() + " duration :" + appointment.getAppointmentDuration() + " appointment date :" + appointment.getAppointmentDateTime());
+        notificationDTO.setPatientId(appointment.getPatientRecordId());
+        restTemplate.postForObject(NOTIFICATION_SERVICE_URL, notificationDTO, NotificationDTO.class);
+        return  appointment;
     }
 
     public AppointmentDTO updateUserAppointment(long id, AppointmentDTO appointmentDTO) {
@@ -150,12 +159,12 @@ public class ApplicationService {
         ).getBody();
     }
 
-    public String sendNotification(String message) {
-        return restTemplate.postForObject(NOTIFICATION_SERVICE_URL + "/send", message, String.class);
-    }
-
-    public String sendDailyNotifications() {
-        return restTemplate.postForObject(NOTIFICATION_SERVICE_URL + "/daily", null, String.class);
-    }
+//    public String sendNotification(String message) {
+//        return restTemplate.postForObject(NOTIFICATION_SERVICE_URL + "/send", message, String.class);
+//    }
+//
+//    public String sendDailyNotifications() {
+//        return restTemplate.postForObject(NOTIFICATION_SERVICE_URL + "/daily", null, String.class);
+//    }
 
 }
