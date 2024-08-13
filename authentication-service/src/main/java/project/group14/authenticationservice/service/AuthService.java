@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import project.group14.authenticationservice.dto.UserDTO;
 import project.group14.authenticationservice.model.User;
 import project.group14.authenticationservice.repository.UserRepository;
 
@@ -27,8 +28,10 @@ public class AuthService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
-    public void saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public void saveUser(UserDTO userDto) {
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        User user=new User(userDto);
+        user.setRole("ROLE_USER");
         userRepository.save(user);
     }
 
