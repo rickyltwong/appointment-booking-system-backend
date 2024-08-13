@@ -22,8 +22,8 @@ public class AppointmentService {
         this.appointmentRepository = appointmentRepository;
     }
 
-    public List<AppointmentDTO> getAppointmentsByPatientRecord(PatientRecord patientRecord) {
-        return appointmentRepository.findByPatientRecord(patientRecord)
+    public List<AppointmentDTO> getAppointmentsByPatientRecordId(Long patientRecordId) {
+        return appointmentRepository.findByPatientRecordId(patientRecordId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -71,7 +71,7 @@ public class AppointmentService {
                 appointment.getAppointmentDuration(),
                 appointment.getDoctorName(),
                 appointment.getClinicalNotes(),
-                appointment.getPatientRecord().getId(),
+                appointment.getPatientRecordId(),
                 appointment.getCreatedAt(),
                 appointment.getUpdatedAt()
         );
@@ -79,7 +79,6 @@ public class AppointmentService {
 
     private Appointment convertToEntity(AppointmentDTO appointmentDTO) {
         Appointment appointment = new Appointment();
-        appointment.setId(appointmentDTO.getId());
         appointment.setStatus(appointmentDTO.getStatus());
         appointment.setAppointmentDateTime(appointmentDTO.getAppointmentDateTime());
         appointment.setAppointmentDuration(appointmentDTO.getAppointmentDuration());

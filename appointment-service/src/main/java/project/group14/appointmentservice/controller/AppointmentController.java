@@ -1,7 +1,6 @@
 package project.group14.appointmentservice.controller;
 
 import project.group14.appointmentservice.dto.AppointmentDTO;
-import project.group14.appointmentservice.repository.AppointmentRepository;
 import project.group14.appointmentservice.service.AppointmentService;
 import project.group14.medicalrecordservice.model.PatientRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class AppointmentController {
     public List<AppointmentDTO> getAppointmentsByPatientRecord(@RequestParam Long patientRecordId) {
         PatientRecord patientRecord = new PatientRecord();
         patientRecord.setId(patientRecordId);
-        return appointmentService.getAppointmentsByPatientRecord(patientRecord);
+        return appointmentService.getAppointmentsByPatientRecordId(patientRecordId);
     }
 
     @GetMapping("/{id}")
@@ -44,10 +43,4 @@ public class AppointmentController {
     public ResponseEntity<AppointmentDTO> updateAppointment(@PathVariable Long id, @RequestBody AppointmentDTO appointmentDTO) {
         return ResponseEntity.ok(appointmentService.updateAppointment(id, appointmentDTO));
     }
-
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {
-//        appointmentService.deleteAppointment(id);
-//        return ResponseEntity.noContent().build();
-//    }
 }

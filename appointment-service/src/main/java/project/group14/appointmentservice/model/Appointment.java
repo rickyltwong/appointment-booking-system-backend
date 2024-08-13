@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import project.group14.medicalrecordservice.model.PatientRecord;
 
 import java.time.LocalDateTime;
 
@@ -33,9 +32,8 @@ public class Appointment {
     @Column(nullable = false)
     private String clinicalNotes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_record_id", nullable = false)
-    private PatientRecord patientRecord;
+    @Column(nullable = false)
+    private Long patientRecordId;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -43,4 +41,9 @@ public class Appointment {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 }
