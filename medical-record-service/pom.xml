@@ -55,10 +55,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>project.group14</groupId>
-            <artifactId>authentication-service</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
         </dependency>
     </dependencies>
 

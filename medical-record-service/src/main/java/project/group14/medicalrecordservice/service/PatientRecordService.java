@@ -39,6 +39,12 @@ public class PatientRecordService {
 
     public PatientRecordDTO updatePatientRecord(Long id, PatientRecordDTO patientRecordDetails) {
         Optional<PatientRecord> optionalPatientRecord = patientRecordRepository.findById(id);
+
+        if (!optionalPatientRecord.isPresent()) {
+            // If not found by ID, try to find by UserId
+            optionalPatientRecord = Optional.ofNullable(patientRecordRepository.findByUserId(id));
+        }
+
         if (optionalPatientRecord.isPresent()) {
             PatientRecord existingPatientRecord = optionalPatientRecord.get();
             existingPatientRecord.setFirstName(patientRecordDetails.getFirstName());
@@ -62,6 +68,7 @@ public class PatientRecordService {
     private PatientRecordDTO convertToDTO(PatientRecord patientRecord) {
         return new PatientRecordDTO(
                 patientRecord.getId(),
+                patientRecord.getUserId(),
                 patientRecord.getFirstName(),
                 patientRecord.getLastName(),
                 patientRecord.getGender(),
@@ -76,6 +83,7 @@ public class PatientRecordService {
     private PatientRecord convertToEntity(PatientRecordDTO patientRecordDTO) {
         return new PatientRecord(
                 patientRecordDTO.getId(),
+                patientRecordDTO.getUserId(),
                 patientRecordDTO.getFirstName(),
                 patientRecordDTO.getLastName(),
                 patientRecordDTO.getGender(),

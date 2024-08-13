@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class PatientRecordDTO {
 
     private Long id;
+    private Long userId;
     private String firstName;
     private String lastName;
     private String gender;

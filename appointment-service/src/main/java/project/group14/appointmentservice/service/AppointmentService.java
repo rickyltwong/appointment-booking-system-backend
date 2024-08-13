@@ -6,7 +6,9 @@ import project.group14.appointmentservice.repository.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,15 +24,17 @@ public class AppointmentService {
     }
 
     public List<AppointmentDTO> getAppointmentsByPatientRecordId(Long patientRecordId) {
-        return appointmentRepository.findByPatientRecordId(patientRecordId)
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return appointmentRepository.findByPatientRecordId(patientRecordId).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     public Optional<AppointmentDTO> getAppointmentById(Long id) {
-        return appointmentRepository.findById(id)
-                .map(this::convertToDTO);
+        return appointmentRepository.findById(id).map(this::convertToDTO);
+    }
+
+    public List<AppointmentDTO> getAppointmentsByDate(LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+        return appointmentRepository.findByAppointmentDateTimeBetween(startOfDay, endOfDay).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     public AppointmentDTO saveAppointment(AppointmentDTO appointmentDTO) {
@@ -64,23 +68,11 @@ public class AppointmentService {
 //    }
 
     public List<AppointmentDTO> getAllAppointments() {
-        return appointmentRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return appointmentRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     private AppointmentDTO convertToDTO(Appointment appointment) {
-        return new AppointmentDTO(
-                appointment.getId(),
-                appointment.getStatus(),
-                appointment.getAppointmentDateTime(),
-                appointment.getAppointmentDuration(),
-                appointment.getDoctorName(),
-                appointment.getClinicalNotes(),
-                appointment.getPatientRecordId(),
-                appointment.getCreatedAt(),
-                appointment.getUpdatedAt()
-        );
+        return new AppointmentDTO(appointment.getId(), appointment.getStatus(), appointment.getAppointmentDateTime(), appointment.getAppointmentDuration(), appointment.getDoctorName(), appointment.getClinicalNotes(), appointment.getPatientRecordId(), appointment.getCreatedAt(), appointment.getUpdatedAt());
     }
 
     private Appointment convertToEntity(AppointmentDTO appointmentDTO) {
