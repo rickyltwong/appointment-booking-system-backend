@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import project.group14.authenticationservice.dto.UserDTO;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -30,7 +31,14 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role));
+        if ("admin".equalsIgnoreCase(username)) {
+            return Arrays.asList(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
+        } else {
+            return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role));
+        }
     }
 
     public User(UserDTO userDTO) {

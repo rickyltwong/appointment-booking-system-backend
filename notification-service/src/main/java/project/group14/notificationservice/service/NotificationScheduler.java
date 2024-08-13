@@ -43,7 +43,6 @@ public class NotificationScheduler {
         }
     }
 
-    // Job to run every 5 minutes
     @Scheduled(cron = "0 */5 * * * ?")
     public void runEveryFiveMinutesJob() {
         log.info("Job running every 5 minutes...");
@@ -60,5 +59,12 @@ public class NotificationScheduler {
                 notificationRepository.save(notification);
             }
         }
+    }
+
+    @Scheduled(cron = "0 */1 * * * ?")
+    public void runEveryMinuteJob() {
+        log.info("Job running every 1 minute...");
+        long count = notificationRepository.count();
+        log.info("Total number of records in Notification Database: {}", count);
     }
 }

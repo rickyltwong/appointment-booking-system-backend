@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import project.group14.authenticationservice.dto.PatientRecordDTO;
 import project.group14.authenticationservice.dto.AppointmentDTO;
+import project.group14.authenticationservice.dto.PatientRecordWithAppointmentsDTO;
 import project.group14.authenticationservice.service.ApplicationService;
 
 import java.util.List;
@@ -24,14 +25,19 @@ public class AdminController {
         return applicationService.getAllPatients();
     }
 
+//    @GetMapping("/patients/{id}")
+//    public PatientRecordDTO getPatientRecordById(@PathVariable Long id) {
+//        return applicationService.getPatientRecordById(id);
+//    }
+
     @GetMapping("/patients/{id}")
-    public PatientRecordDTO getPatientRecordById(@PathVariable Long id) {
-        return applicationService.getPatientRecordById(id);
+    public PatientRecordWithAppointmentsDTO getPatientRecordWithAppointmentsById(@PathVariable Long id) {
+        return applicationService.getPatientRecordWithAppointmentsById(id);
     }
 
     @GetMapping("/appointments")
-    public List<AppointmentDTO> getAllAppointments() {
-        return applicationService.getAllAppointments();
+    public List<AppointmentDTO> getAllAppointments(@RequestParam(required = false) String date) {
+        return applicationService.getAllAppointments(date);
     }
 
     @PutMapping("/appointments/{id}")

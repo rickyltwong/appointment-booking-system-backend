@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import project.group14.authenticationservice.dto.AppointmentDTO;
 import project.group14.authenticationservice.dto.NotificationDTO;
 import project.group14.authenticationservice.dto.PatientRecordDTO;
+import project.group14.authenticationservice.dto.PatientRecordWithAppointmentsDTO;
 import project.group14.authenticationservice.model.User;
 import project.group14.authenticationservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,10 +134,31 @@ public class ApplicationService {
         return restTemplate.getForObject(url, PatientRecordDTO.class);
     }
 
+    public PatientRecordWithAppointmentsDTO getPatientRecordWithAppointmentsById(Long id) {
+
+        PatientRecordDTO patientRecordDTO = getPatientRecordById(id);
+
+        String url = APPOINTMENT_SERVICE_URL + "?patientRecordId=" + id;
+        List<AppointmentDTO> appointments = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<AppointmentDTO>>() {
+                }
+        ).getBody();
+
+        return new PatientRecordWithAppointmentsDTO(patientRecordDTO, appointments);
+    }
+
     // Fetch all appointments across the system
-    public List<AppointmentDTO> getAllAppointments() {
+    public List<AppointmentDTO> getAllAppointments(String date) {
+        String url = APPOINTMENT_SERVICE_URL;
+        if (date != null) {
+            url += "?date=" + date;
+        }
+
         return restTemplate.exchange(
-                APPOINTMENT_SERVICE_URL,
+                url,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<AppointmentDTO>>() {
@@ -146,7 +168,12 @@ public class ApplicationService {
 
     public AppointmentDTO updateAppointment(Long id, AppointmentDTO appointmentDTO) {
         String url = APPOINTMENT_SERVICE_URL + "/" + id;
-        return restTemplate.postForObject(url, appointmentDTO, AppointmentDTO.class);
+        return restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                new HttpEntity<>(appointmentDTO),
+                AppointmentDTO.class
+        ).getBody();
     }
 
     public List<String> getAllNotifications() {
