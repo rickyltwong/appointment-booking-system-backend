@@ -30,6 +30,12 @@ public class PatientRecordController {
         Optional<PatientRecordDTO> patientRecordDTO = patientRecordService.getPatientById(id);
         return patientRecordDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<PatientRecordDTO> getPatientByUserId(@PathVariable Long userId) {
+        Optional<PatientRecordDTO> patientRecordDTO = patientRecordService.getPatientById(userId);
+        return patientRecordDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
     @PostMapping
     public ResponseEntity<PatientRecordDTO> createPatientRecord(@RequestBody PatientRecordDTO patientRecordDTO) {
