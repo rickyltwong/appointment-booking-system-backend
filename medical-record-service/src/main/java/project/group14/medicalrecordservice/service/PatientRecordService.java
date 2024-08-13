@@ -31,6 +31,12 @@ public class PatientRecordService {
                 .map(this::convertToDTO);
     }
 
+    public Optional<PatientRecordDTO> getPatientByUserId(Long userId) {
+        return patientRecordRepository.findById(userId)
+                .map(this::convertToDTO);
+    }
+
+
     public PatientRecordDTO savePatientRecord(PatientRecordDTO patientRecordDTO) {
         PatientRecord patientRecord = convertToEntity(patientRecordDTO);
         PatientRecord savedRecord = patientRecordRepository.save(patientRecord);

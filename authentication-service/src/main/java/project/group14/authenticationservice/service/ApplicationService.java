@@ -1,6 +1,7 @@
 package project.group14.authenticationservice.service;
 
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,13 +33,62 @@ public class ApplicationService {
         this.restTemplate = restTemplate;
     }
 
-    /*
-     *   User services
-     */
+/*
+     ---------------------------
+     User-related methods
+     ---------------------------
+*/
 
-    // ---------------------------
-    // User-related methods
-    // ---------------------------
+    public PatientRecordDTO createPatientRecord(PatientRecordDTO patientRecordDTO) {
+        User user = getAuthenticatedUser();
+        patientRecordDTO.setUserId((long) user.getId());
+        return restTemplate.postForObject(PATIENT_SERVICE_URL, patientRecordDTO, PatientRecordDTO.class);
+    }
+
+    public AppointmentDTO createAppointment(AppointmentDTO appointmentDTO) {
+        PatientRecordDTO patientRecordDTO = getPatientRecordByUserId();
+        appointmentDTO.setPatientRecordId(patientRecordDTO.getId());
+        return restTemplate.postForObject(APPOINTMENT_SERVICE_URL, appointmentDTO, AppointmentDTO.class);
+    }
+
+    public AppointmentDTO updateUserAppointment(long id, AppointmentDTO appointmentDTO) {
+        User user = getAuthenticatedUser();
+        PatientRecordDTO patientRecordDTO = getPatientRecordById((long) user.getId());
+        appointmentDTO.setPatientRecordId(patientRecordDTO.getId());
+
+        String url = APPOINTMENT_SERVICE_URL + "/" + id;
+
+        return restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                new HttpEntity<>(appointmentDTO),
+                AppointmentDTO.class
+        ).getBody();
+    }
+
+    public AppointmentDTO getUserAppointment(long id) {
+        String url = APPOINTMENT_SERVICE_URL + "/" + id;
+
+        return restTemplate.getForObject(url, AppointmentDTO.class);
+    }
+
+    // Get all appointments for the authenticated user
+    public List<AppointmentDTO> getUserAppointments() {
+        PatientRecordDTO patientRecordDTO = getPatientRecordByUserId();
+        if (patientRecordDTO != null) {
+            String url = APPOINTMENT_SERVICE_URL + "?userId=" + patientRecordDTO.getId();
+            return new RestTemplate().exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<AppointmentDTO>>() {
+                    }
+            ).getBody();
+
+        }
+        throw new IllegalStateException("No Patient Record found in the system!");
+    }
+
 
     // Get the currently authenticated user
     public User getAuthenticatedUser() {
@@ -46,22 +96,12 @@ public class ApplicationService {
         return userRepository.findByUsername(userDetails.getUsername()).orElse(null);
     }
 
-    // Get all appointments for the authenticated user
-    public List<AppointmentDTO> getUserAppointments() {
+    // Fetch a specific patient record by ID
+    public PatientRecordDTO getPatientRecordByUserId() {
         User user = getAuthenticatedUser();
-        if (user != null) {
-            String url = APPOINTMENT_SERVICE_URL + "?userId=" + user.getId();
-            return new RestTemplate().exchange(
-                    url,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<AppointmentDTO>>() {}
-            ).getBody();
-
-        }
-        throw new IllegalStateException("User is not authenticated");
+        String url = PATIENT_SERVICE_URL + "/user/" + user.getId();
+        return restTemplate.getForObject(url, PatientRecordDTO.class);
     }
-
 
     /*
      *   Admin services
@@ -69,7 +109,13 @@ public class ApplicationService {
 
     // Fetch all patients
     public List<PatientRecordDTO> getAllPatients() {
-        return restTemplate.getForObject(PATIENT_SERVICE_URL, List.class);
+        return restTemplate.exchange(
+                PATIENT_SERVICE_URL,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<PatientRecordDTO>>() {
+                }
+        ).getBody();
     }
 
     // Fetch a specific patient record by ID
@@ -80,17 +126,28 @@ public class ApplicationService {
 
     // Fetch all appointments across the system
     public List<AppointmentDTO> getAllAppointments() {
-        return restTemplate.getForObject(APPOINTMENT_SERVICE_URL, List.class);
+        return restTemplate.exchange(
+                APPOINTMENT_SERVICE_URL,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<AppointmentDTO>>() {
+                }
+        ).getBody();
     }
 
     public AppointmentDTO updateAppointment(Long id, AppointmentDTO appointmentDTO) {
         String url = APPOINTMENT_SERVICE_URL + "/" + id;
-        restTemplate.put(url, appointmentDTO);
-        return appointmentDTO;
+        return restTemplate.postForObject(url, appointmentDTO, AppointmentDTO.class);
     }
 
     public List<String> getAllNotifications() {
-        return restTemplate.getForObject(NOTIFICATION_SERVICE_URL, List.class);
+        return restTemplate.exchange(
+                NOTIFICATION_SERVICE_URL,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<String>>() {
+                }
+        ).getBody();
     }
 
     public String sendNotification(String message) {
@@ -100,6 +157,5 @@ public class ApplicationService {
     public String sendDailyNotifications() {
         return restTemplate.postForObject(NOTIFICATION_SERVICE_URL + "/daily", null, String.class);
     }
-
 
 }

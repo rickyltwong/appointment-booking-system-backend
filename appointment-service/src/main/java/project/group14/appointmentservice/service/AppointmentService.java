@@ -77,6 +77,7 @@ public class AppointmentService {
 
     private Appointment convertToEntity(AppointmentDTO appointmentDTO) {
         Appointment appointment = new Appointment();
+        appointment.setPatientRecordId(appointmentDTO.getPatientRecordId());
         appointment.setStatus(appointmentDTO.getStatus());
         appointment.setAppointmentDateTime(appointmentDTO.getAppointmentDateTime());
         appointment.setAppointmentDuration(appointmentDTO.getAppointmentDuration());

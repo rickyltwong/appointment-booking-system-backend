@@ -42,7 +42,7 @@ public class AppointmentController {
         return appointmentDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/new")
+    @PostMapping
     public AppointmentDTO createAppointment(@RequestBody AppointmentDTO appointmentDTO) {
         return appointmentService.saveAppointment(appointmentDTO);
     }
