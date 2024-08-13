@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,9 +22,19 @@ public class AppointmentController {
     }
 
     @GetMapping
-    public List<AppointmentDTO> getAppointmentsByPatientRecord(@RequestParam Long patientRecordId) {
-        return appointmentService.getAppointmentsByPatientRecordId(patientRecordId);
+    public List<AppointmentDTO> getAppointments(
+            @RequestParam(required = false) Long patientRecordId,
+            @RequestParam(required = false) String date) {
+        if (patientRecordId != null) {
+            return appointmentService.getAppointmentsByPatientRecordId(patientRecordId);
+        } else if (date != null) {
+            LocalDate localDate = LocalDate.parse(date);
+            return appointmentService.getAppointmentsByDate(localDate);
+        } else {
+            return appointmentService.getAllAppointments(); // NOTE: or choose to throw an error
+        }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<AppointmentDTO> getAppointmentById(@PathVariable Long id) {

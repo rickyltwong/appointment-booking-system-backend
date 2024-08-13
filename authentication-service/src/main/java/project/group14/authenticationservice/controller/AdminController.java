@@ -12,8 +12,12 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
 
+    private final ApplicationService applicationService;
+
     @Autowired
-    private ApplicationService applicationService;
+    public AdminController(ApplicationService  applicationService) {
+        this.applicationService = applicationService;
+    }
 
     @GetMapping("/patients")
     public List<PatientRecordDTO> getAllPatients() {
