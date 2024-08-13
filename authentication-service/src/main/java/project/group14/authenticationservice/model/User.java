@@ -36,8 +36,7 @@ public class User implements UserDetails {
     public User(UserDTO userDTO) {
         this.username = userDTO.getUsername();
         this.password = userDTO.getPassword();
-        this.active = true;
-        ;
+        this.role = "USER";
     }
 
     @Override

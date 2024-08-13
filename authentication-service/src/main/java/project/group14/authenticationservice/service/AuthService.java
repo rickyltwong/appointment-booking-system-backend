@@ -31,7 +31,14 @@ public class AuthService implements UserDetailsService {
     public void saveUser(UserDTO userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User user=new User(userDto);
-        user.setRole("ROLE_USER");
+        user.setRole("USER");
+        userRepository.save(user);
+    }
+
+    public void saveAdmin(UserDTO userDto) {
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        User user=new User(userDto);
+        user.setRole("ADMIN");
         userRepository.save(user);
     }
 
