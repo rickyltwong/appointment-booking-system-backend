@@ -32,9 +32,8 @@ public class User implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
 
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private PatientRecord patientRecord;
+    @Column(nullable = false)
+    private Long patientRecordId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

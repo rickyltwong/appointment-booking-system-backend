@@ -1,5 +1,7 @@
 package project.group14.authenticationservice.service;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import project.group14.authenticationservice.model.User;
 import project.group14.authenticationservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,20 @@ public class UserService implements UserDetailsService {
         }
 
         return user.get();
+    }
+
+    public int getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof User) {
+                User user = (User) principal;
+                return user.getId();
+            }
+        }
+        throw new IllegalStateException("User is not authenticated");
     }
 
 }
