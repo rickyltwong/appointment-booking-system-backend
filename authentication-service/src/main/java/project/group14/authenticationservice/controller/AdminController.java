@@ -44,13 +44,13 @@ public class AdminController {
         return applicationService.getAllNotifications();
     }
 
-    @PostMapping("/notifications/send")
-    public String sendNotification(@RequestBody String message) {
-        return applicationService.sendNotification(message);
-    }
-
-    @PostMapping("/notifications/daily")
-    public String sendDailyNotifications() {
-        return applicationService.sendDailyNotifications();
-    }
+//    @PostMapping("/notifications/send")
+//    public String sendNotification(@RequestBody String message) {
+//        return applicationService.sendNotification(message);
+//    }
+//
+//    @PostMapping("/notifications/daily")
+//    public String sendDailyNotifications() {
+//        return applicationService.sendDailyNotifications();
+//    }
 }
