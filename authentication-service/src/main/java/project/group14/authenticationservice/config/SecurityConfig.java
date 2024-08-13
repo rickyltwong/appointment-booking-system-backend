@@ -9,23 +9,23 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import project.group14.authenticationservice.service.ApplicationService;
+import project.group14.authenticationservice.service.AuthService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final ApplicationService userService;
+    private final AuthService authService;
 
     @Autowired
-    public SecurityConfig(ApplicationService userService) {
-        this.userService = userService;
+    public SecurityConfig(AuthService authService) {
+        this.authService = authService;
     }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userService);
+        provider.setUserDetailsService(authService);
         provider.setPasswordEncoder(getPasswordEncoder());
         return provider;
     }

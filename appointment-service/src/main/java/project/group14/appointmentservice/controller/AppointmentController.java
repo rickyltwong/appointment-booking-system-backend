@@ -2,7 +2,6 @@ package project.group14.appointmentservice.controller;
 
 import project.group14.appointmentservice.dto.AppointmentDTO;
 import project.group14.appointmentservice.service.AppointmentService;
-import project.group14.medicalrecordservice.model.PatientRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +20,8 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
-
     @GetMapping
     public List<AppointmentDTO> getAppointmentsByPatientRecord(@RequestParam Long patientRecordId) {
-        PatientRecord patientRecord = new PatientRecord();
-        patientRecord.setId(patientRecordId);
         return appointmentService.getAppointmentsByPatientRecordId(patientRecordId);
     }
 
