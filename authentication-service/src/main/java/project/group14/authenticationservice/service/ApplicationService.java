@@ -1,5 +1,7 @@
 package project.group14.authenticationservice.service;
 
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,8 +50,14 @@ public class ApplicationService {
     public List<AppointmentDTO> getUserAppointments() {
         User user = getAuthenticatedUser();
         if (user != null) {
-            String url = APPOINTMENT_SERVICE_URL + "?patientRecordId=" + user.getPatientRecordId();
-            return restTemplate.getForObject(url, List.class);
+            String url = APPOINTMENT_SERVICE_URL + "?userId=" + user.getId();
+            return new RestTemplate().exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<AppointmentDTO>>() {}
+            ).getBody();
+
         }
         throw new IllegalStateException("User is not authenticated");
     }

@@ -1,6 +1,5 @@
 package project.group14.authenticationservice.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,7 +16,6 @@ public class SecurityConfig {
 
     private final AuthService authService;
 
-    @Autowired
     public SecurityConfig(AuthService authService) {
         this.authService = authService;
     }
@@ -40,7 +38,7 @@ public class SecurityConfig {
 
         httpSecurity.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/", "/register").permitAll()
+                .requestMatchers("/",  "/auth/user/register", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/user").hasRole("USER")
